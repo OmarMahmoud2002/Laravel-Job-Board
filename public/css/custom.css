@@ -586,6 +586,7 @@ a:hover {
     margin: -3rem 0 3rem;
     position: relative;
     z-index: 2;
+    display: none;
 }
 
 .stat-item {
@@ -1588,7 +1589,7 @@ a:hover {
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     padding: 2rem;
-    position: sticky;
+    /* position: sticky; */
     top: 100px;
 }
 

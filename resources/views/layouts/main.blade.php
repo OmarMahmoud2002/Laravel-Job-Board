@@ -23,6 +23,8 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/footer-custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pagination-custom.css') }}">
 
     @stack('styles')
 </head>
@@ -86,8 +88,11 @@
                         </li>
                     </ul>
 
-                    <div class="d-flex">
+                    <div class="d-flex align-items-center">
                         @auth
+                            <!-- Notification Dropdown -->
+                            @include('components.notification-dropdown')
+
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->name }}
@@ -97,12 +102,20 @@
                                         <li><a class="dropdown-item py-2 px-3" href="{{ route('admin.dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i> Admin Dashboard</a></li>
                                     @elseif(Auth::user()->role === 'employer')
                                         <li><a class="dropdown-item py-2 px-3" href="{{ route('employer.dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i> Employer Dashboard</a></li>
-                                        <li><a class="dropdown-item py-2 px-3" href="{{ route('job-listings.create') }}"><i class="fas fa-plus-circle me-2"></i> Post a Job</a></li>
+                                        <li><a class="dropdown-item py-2 px-3" href="{{ url('/add_post') }}"><i class="fas fa-plus-circle me-2"></i> Post a Job</a></li>
                                     @elseif(Auth::user()->role === 'candidate')
                                         <li><a class="dropdown-item py-2 px-3" href="{{ route('candidate.dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i> Candidate Dashboard</a></li>
                                         <li><a class="dropdown-item py-2 px-3" href="{{ route('candidate.job-applications.index') }}"><i class="fas fa-file-alt me-2"></i> My Applications</a></li>
                                     @endif
-                                    <li><a class="dropdown-item py-2 px-3" href="{{ route('profile.edit') }}"><i class="fas fa-user-edit me-2"></i> Profile</a></li>
+                                    @if(Auth::user()->role === 'admin')
+                                        <li><a class="dropdown-item py-2 px-3" href="{{ route('profile.edit') }}"><i class="fas fa-user-edit me-2"></i> Profile</a></li>
+                                    @elseif(Auth::user()->role === 'employer')
+                                        <li><a class="dropdown-item py-2 px-3" href="{{ route('employer.profile') }}"><i class="fas fa-user-edit me-2"></i> Profile</a></li>
+                                    @elseif(Auth::user()->role === 'candidate')
+                                        <li><a class="dropdown-item py-2 px-3" href="{{ route('candidate.profile') }}"><i class="fas fa-user-edit me-2"></i> Profile</a></li>
+                                    @else
+                                        <li><a class="dropdown-item py-2 px-3" href="{{ route('profile.edit') }}"><i class="fas fa-user-edit me-2"></i> Profile</a></li>
+                                    @endif
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <form method="POST" action="{{ route('logout') }}">
@@ -144,7 +157,7 @@
         @yield('content')
     </main>
 
-    <footer class="bg-gradient text-white py-5 mt-5">
+    <footer class="bg-gradient-custom text-white py-5 mt-5">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 mb-4 mb-lg-0">
@@ -177,7 +190,7 @@
                     <ul class="list-unstyled footer-links">
                         <li class="mb-2"><a href="{{ route('register') }}" class="footer-link"><i class="fas fa-chevron-right me-1"></i> Register</a></li>
                         <li class="mb-2"><a href="{{ route('login') }}" class="footer-link"><i class="fas fa-chevron-right me-1"></i> Login</a></li>
-                        <li class="mb-2"><a href="{{ route('job-listings.create') }}" class="footer-link"><i class="fas fa-chevron-right me-1"></i> Post a Job</a></li>
+                        <li class="mb-2"><a href="{{ url('/add_post') }}" class="footer-link"><i class="fas fa-chevron-right me-1"></i> Post a Job</a></li>
                         <li><a href="#" class="footer-link"><i class="fas fa-chevron-right me-1"></i> Pricing</a></li>
                     </ul>
                 </div>
@@ -243,7 +256,7 @@
 
     <!-- Floating action button for job posting -->
     <div class="floating-action-btn">
-        <a href="{{ route('job-listings.create') }}" class="btn btn-primary btn-lg rounded-circle shadow-lg" data-bs-toggle="tooltip" data-bs-placement="left" title="Post a Job">
+        <a href="{{ url('/add_post') }}" class="btn btn-primary btn-lg rounded-circle shadow-lg" data-bs-toggle="tooltip" data-bs-placement="left" title="Post a Job">
             <i class="fas fa-plus"></i>
         </a>
     </div>
@@ -253,6 +266,11 @@
 
     <!-- Custom JS -->
     <script src="{{ asset('js/custom.js') }}"></script>
+
+    @auth
+    <!-- Notifications JS -->
+    <script src="{{ asset('js/notifications.js') }}"></script>
+    @endauth
 
     @stack('scripts')
 </body>

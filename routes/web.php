@@ -10,6 +10,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EmployersViewController;
+use App\Http\Controllers\NotificationController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -65,12 +66,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // User Profile (All authenticated users)
     Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get('/', [ProfileController::class, 'edit'])
-            ->name('edit');
+        Route::get('/', function () {
+            $user = auth()->user();
+
+            // Redirect to role-specific profile page if available
+            if ($user->role === 'admin') {
+                return view('profile.admin-profile');
+            } elseif ($user->role === 'employer') {
+                return redirect()->route('employer.profile');
+            } elseif ($user->role === 'candidate') {
+                return redirect()->route('candidate.profile');
+            } else {
+                return app()->make(ProfileController::class)->edit(request());
+            }
+        })->name('edit');
         Route::patch('/', [ProfileController::class, 'update'])
             ->name('update');
         Route::delete('/', [ProfileController::class, 'destroy'])
             ->name('destroy');
+    });
+
+    // Notifications
+    Route::prefix('notifications')->name('notifications.')->middleware('auth')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('mark-read');
+        Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('mark-all-read');
+        Route::delete('/{id}', [NotificationController::class, 'delete'])->name('delete');
+        Route::delete('/', [NotificationController::class, 'deleteAll'])->name('delete-all');
+        Route::get('/unread', [NotificationController::class, 'getUnreadNotifications'])->name('unread');
     });
 
     // Admin Routes
@@ -80,8 +103,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('dashboard');
 
         // User Management
-        Route::get('/users', [AdminController::class, 'manageUsers'])
-            ->name('users.manage');
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [AdminController::class, 'manageUsers'])
+                ->name('manage');
+            Route::get('/{id}/edit', [AdminController::class, 'editUser'])
+                ->name('edit');
+            Route::put('/{id}', [AdminController::class, 'updateUser'])
+                ->name('update');
+            Route::delete('/{id}', [AdminController::class, 'deleteUser'])
+                ->name('delete');
+        });
 
         // Job Management
         Route::prefix('jobs')->name('jobs.')->group(function () {
@@ -139,10 +170,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('application.update-status');
     });
 
+    // New route for adding a job post
+    Route::get('/add_post', [JobListingController::class, 'create'])
+        ->middleware('role:employer')
+        ->name('job-listings.create');
+
     // Job Listings Management (for employers)
-    Route::resource('job-listings', JobListingController::class)
-        ->except(['index', 'show'])
-        ->middleware('role:employer');
+    Route::prefix('job-listings')->name('job-listings.')->middleware('role:employer')->group(function () {
+        Route::post('/', [JobListingController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [JobListingController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [JobListingController::class, 'update'])->name('update');
+        Route::delete('/{id}', [JobListingController::class, 'destroy'])->name('destroy');
+    });
 });
 
 // Include Auth Routes
