@@ -3,18 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Job;
-use App\Models\User;
-use App\Notifications\NewJobCreated;
-use App\Notifications\NewJobPosted;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class JobListingController extends Controller
 {
-    use AuthorizesRequests;
     /**
      * Display a listing of job listings
      *
@@ -99,30 +93,18 @@ class JobListingController extends Controller
     /**
      * Show the form for creating a new job listing
      *
-     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * @return \Illuminate\View\View
      */
     public function create()
     {
-        // Ensure user is authenticated and is an employer
-        if (!Auth::check()) {
-            return redirect()->route('login')
-                ->with('error', 'You must be logged in to post a job.');
-        }
-
-        if (Auth::user()->role !== 'employer') {
-            return redirect()->route('home')
-                ->with('error', 'Only employers can post jobs.');
-        }
-
-        // Get the authenticated employer
+        // Get the employer
         $employer = Auth::user();
 
-        // Define common job categories for suggestions
+        // Get common categories for suggestions
         $commonCategories = [
             'Web Development', 'Mobile Development', 'UI/UX Design',
             'Data Science', 'DevOps', 'Project Management',
-            'Marketing', 'Sales', 'Customer Support', 'Finance',
-            'Human Resources', 'Education', 'Healthcare', 'Engineering'
+            'Marketing', 'Sales', 'Customer Support', 'Finance'
         ];
 
         return view('job-listings.create', compact('employer', 'commonCategories'));
@@ -136,14 +118,7 @@ class JobListingController extends Controller
      */
     public function store(Request $request)
     {
-        // Ensure user is authenticated and is an employer
-        if (!Auth::check() || Auth::user()->role !== 'employer') {
-            return redirect()->route('login')
-                ->with('error', 'You must be logged in as an employer to post a job.');
-        }
-
-        // Validate the incoming request data
-        $validated = $request->validate([
+        $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'location' => 'required|string|max:255',
@@ -153,43 +128,36 @@ class JobListingController extends Controller
             'salary_min' => 'nullable|numeric|min:0',
             'salary_max' => 'nullable|numeric|min:0|gte:salary_min',
             'deadline' => 'required|date|after:today',
-            'company_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         // Handle company logo upload if provided
         $companyLogo = null;
         if ($request->hasFile('company_logo')) {
+            $request->validate([
+                'company_logo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+
             $companyLogo = $request->file('company_logo')->store('company_logos', 'public');
         }
 
-        // Create the new job listing
         $job = Job::create([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'location' => $validated['location'],
-            'category' => $validated['category'],
-            'type' => $validated['type'],
-            'experience_level' => $validated['experience_level'] ?? null,
-            'salary_min' => $validated['salary_min'],
-            'salary_max' => $validated['salary_max'],
-            'deadline' => $validated['deadline'],
-            'is_approved' => false, // Jobs require approval by default
+            'title' => $request->title,
+            'description' => $request->description,
+            'location' => $request->location,
+            'category' => $request->category,
+            'type' => $request->type,
+            'experience_level' => $request->experience_level,
+            'salary_min' => $request->salary_min,
+            'salary_max' => $request->salary_max,
+            'deadline' => $request->deadline,
+            'is_approved' => false,
             'employer_id' => Auth::id(),
             'company_logo' => $companyLogo,
         ]);
 
-        // Load the employer relationship for notifications
-        $job->load('employer');
-
-        // Notify admins about the new job posting
-        $admins = User::where('role', 'admin')->get();
-        Notification::send($admins, new NewJobCreated($job));
-
         return redirect()->route('employer.dashboard')
             ->with('success', 'Your job listing has been submitted and is pending approval.');
     }
-
-
 
     /**
      * Show the form for editing a job listing
@@ -201,8 +169,11 @@ class JobListingController extends Controller
     {
         $job = Job::findOrFail($id);
 
-        // Use the policy to authorize the action
-        $this->authorize('update', $job);
+        // Ensure the job belongs to the current employer
+        if ($job->employer_id !== Auth::id()) {
+            return redirect()->route('employer.dashboard')
+                ->with('error', 'You are not authorized to edit this job listing.');
+        }
 
         return view('job-listings.edit', compact('job'));
     }
@@ -230,8 +201,11 @@ class JobListingController extends Controller
 
         $job = Job::findOrFail($id);
 
-        // Use the policy to authorize the action
-        $this->authorize('update', $job);
+        // Ensure the job belongs to the current employer
+        if ($job->employer_id !== Auth::id()) {
+            return redirect()->route('employer.dashboard')
+                ->with('error', 'You are not authorized to update this job listing.');
+        }
 
         // Handle company logo upload if provided
         if ($request->hasFile('company_logo')) {
@@ -296,8 +270,11 @@ class JobListingController extends Controller
     {
         $job = Job::findOrFail($id);
 
-        // Use the policy to authorize the action
-        $this->authorize('delete', $job);
+        // Ensure the job belongs to the current employer
+        if ($job->employer_id !== Auth::id()) {
+            return redirect()->route('employer.dashboard')
+                ->with('error', 'You are not authorized to delete this job listing.');
+        }
 
         // Delete company logo if exists
         if ($job->company_logo) {

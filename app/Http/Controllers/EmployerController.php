@@ -17,6 +17,9 @@ class EmployerController extends Controller
      */
     public function dashboard()
     {
+        // Get the authenticated user
+        $user = Auth::user();
+
         // Get all jobs posted by this employer
         $jobs = Job::where('employer_id', Auth::id())
             ->withCount('applications')
@@ -31,7 +34,7 @@ class EmployerController extends Controller
             'totalApplications' => $jobs->sum('applications_count'),
         ];
 
-        return view('employer.dashboard', compact('jobs', 'stats'));
+        return view('employer.dashboard', compact('jobs', 'stats', 'user'));
     }
 
     /**

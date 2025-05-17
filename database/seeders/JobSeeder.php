@@ -14,22 +14,13 @@ class JobSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get employer users by email to ensure consistent IDs
-        $employer1 = User::where('email', 'employer1@jobboard.com')->first();
-        $employer2 = User::where('email', 'employer2@jobboard.com')->first();
-        $employer3 = User::where('email', 'employer3@jobboard.com')->first();
+        // Get employer IDs
+        $employers = User::where('role', 'employer')->pluck('id')->toArray();
 
-        if (!$employer1 || !$employer2 || !$employer3) {
-            $this->command->info('Not all required employers found. Please run UserSeeder first.');
+        if (empty($employers)) {
+            $this->command->info('No employers found. Please run UserSeeder first.');
             return;
         }
-
-        // Create an array of employer IDs
-        $employers = [
-            $employer1->id,
-            $employer2->id,
-            $employer3->id
-        ];
 
         $jobs = [
             // Tech Solutions Inc. Jobs
@@ -57,7 +48,7 @@ class JobSeeder extends Seeder
                 'salary_max' => 120000,
                 'deadline' => now()->addDays(30),
                 'is_approved' => true,
-                'employer_id' => $employer1->id,
+                'employer_id' => $employers[0],
             ],
             [
                 'title' => 'Frontend Developer (React)',
@@ -83,7 +74,7 @@ class JobSeeder extends Seeder
                 'salary_max' => 100000,
                 'deadline' => now()->addDays(45),
                 'is_approved' => true,
-                'employer_id' => $employer1->id,
+                'employer_id' => $employers[0],
             ],
 
             // Global Marketing Group Jobs
@@ -111,7 +102,7 @@ class JobSeeder extends Seeder
                 'salary_max' => 75000,
                 'deadline' => now()->addDays(20),
                 'is_approved' => true,
-                'employer_id' => $employer2->id,
+                'employer_id' => $employers[1],
             ],
             [
                 'title' => 'Content Writer (Part-time)',
@@ -137,7 +128,7 @@ class JobSeeder extends Seeder
                 'salary_max' => 35,
                 'deadline' => now()->addDays(15),
                 'is_approved' => true,
-                'employer_id' => $employer2->id,
+                'employer_id' => $employers[1],
             ],
 
             // Healthcare Innovations Jobs
@@ -165,7 +156,7 @@ class JobSeeder extends Seeder
                 'salary_max' => 95000,
                 'deadline' => now()->addDays(25),
                 'is_approved' => true,
-                'employer_id' => $employer3->id,
+                'employer_id' => $employers[2],
             ],
             [
                 'title' => 'UI/UX Designer for Healthcare Applications',
@@ -191,7 +182,7 @@ class JobSeeder extends Seeder
                 'salary_max' => 110000,
                 'deadline' => now()->addDays(40),
                 'is_approved' => true,
-                'employer_id' => $employer3->id,
+                'employer_id' => $employers[2],
             ],
 
             // Pending Approval Jobs
@@ -219,7 +210,7 @@ class JobSeeder extends Seeder
                 'salary_max' => 130000,
                 'deadline' => now()->addDays(35),
                 'is_approved' => false,
-                'employer_id' => $employer1->id,
+                'employer_id' => $employers[0],
             ],
             [
                 'title' => 'Social Media Intern',
@@ -245,7 +236,7 @@ class JobSeeder extends Seeder
                 'salary_max' => 20,
                 'deadline' => now()->addDays(10),
                 'is_approved' => false,
-                'employer_id' => $employer2->id,
+                'employer_id' => $employers[1],
             ],
         ];
 

@@ -4,60 +4,22 @@
 
 @section('content')
     <!-- Page Header -->
-    <section class="job-detail-hero py-5">
+    <section class="bg-primary text-white py-4">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-6">
+                <div class="col-md-6">
+                    <h1 class="mb-0">Job Details</h1>
+                </div>
+                <div class="col-md-6">
                     <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-3">
-                            <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('job-listings.index') }}">Jobs</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">{{ Str::limit($job->title, 30) }}</li>
+                        <ol class="breadcrumb justify-content-md-end mb-0">
+                            <li class="breadcrumb-item"><a href="{{ url('/') }}" class="text-white">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('job-listings.index') }}" class="text-white">Jobs</a></li>
+                            <li class="breadcrumb-item active text-white" aria-current="page">{{ Str::limit($job->title, 30) }}</li>
                         </ol>
                     </nav>
-                    <h1 class="display-5 fw-bold mb-3 text-white">{{ $job->title }}</h1>
-                    <p class="lead text-white-50 mb-4">{{ $job->employer->company_name ?? $job->employer->name }}</p>
-
-                    <div class="d-flex flex-wrap mb-4">
-                        <div class="job-detail-badge me-3 mb-2">
-                            <i class="fas fa-map-marker-alt me-2"></i> {{ $job->location }}
-                        </div>
-                        <div class="job-detail-badge me-3 mb-2">
-                            <i class="fas fa-briefcase me-2"></i> {{ ucfirst($job->type) }}
-                        </div>
-                        <div class="job-detail-badge me-3 mb-2">
-                            <i class="fas fa-money-bill-wave me-2"></i>
-                            @if($job->salary_min && $job->salary_max)
-                                ${{ number_format($job->salary_min) }} - ${{ number_format($job->salary_max) }}
-                            @elseif($job->salary_min)
-                                From ${{ number_format($job->salary_min) }}
-                            @elseif($job->salary_max)
-                                Up to ${{ number_format($job->salary_max) }}
-                            @else
-                                Not specified
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="d-flex flex-wrap">
-                        <span class="badge bg-primary me-2 mb-2 py-2 px-3">{{ $job->category }}</span>
-                        <span class="badge bg-danger me-2 mb-2 py-2 px-3">
-                            <i class="fas fa-clock me-1"></i> Deadline: {{ \Carbon\Carbon::parse($job->deadline)->format('M d, Y') }}
-                        </span>
-                        @if($job->remote)
-                            <span class="badge bg-success me-2 mb-2 py-2 px-3">
-                                <i class="fas fa-home me-1"></i> Remote
-                            </span>
-                        @endif
-                    </div>
-                </div>
-                <div class="col-lg-6 d-none d-lg-block text-center">
-                    <img src="https://img.freepik.com/free-vector/job-interview-concept-illustration_114360-2156.jpg" alt="Job Application" class="img-fluid job-detail-hero-image animate__animated animate__fadeInRight">
                 </div>
             </div>
-        </div>
-        <div class="job-detail-hero-shape-divider">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,133.3C672,139,768,181,864,181.3C960,181,1056,139,1152,122.7C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>
         </div>
     </section>
 
@@ -117,57 +79,9 @@
 
                     <!-- Job Description -->
                     <div class="job-detail-content mb-4">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h3 class="mb-4">Job Description</h3>
-                                <div class="job-description">
-                                    {!! nl2br(e($job->description)) !!}
-                                </div>
-
-                                <!-- Job Requirements Section -->
-                                <div class="job-requirements mt-5">
-                                    <h4 class="mb-3"><i class="fas fa-clipboard-list text-primary me-2"></i> Requirements</h4>
-                                    <ul class="job-requirements-list">
-                                        <li>Bachelor's degree in relevant field</li>
-                                        <li>{{ rand(2, 5) }}+ years of experience in similar role</li>
-                                        <li>Strong communication and teamwork skills</li>
-                                        <li>Problem-solving abilities and attention to detail</li>
-                                        <li>Ability to work independently and meet deadlines</li>
-                                    </ul>
-                                </div>
-
-                                <!-- Job Benefits Section -->
-                                <div class="job-benefits mt-5">
-                                    <h4 class="mb-3"><i class="fas fa-gift text-primary me-2"></i> Benefits</h4>
-                                    <ul class="job-benefits-list">
-                                        <li>Competitive salary package</li>
-                                        <li>Health insurance and retirement plans</li>
-                                        <li>Flexible working hours</li>
-                                        <li>Professional development opportunities</li>
-                                        <li>Friendly and collaborative work environment</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-4 d-none d-md-block">
-                                <img src="https://img.freepik.com/free-vector/employees-cv-candidates-resume-corporate_335657-4370.jpg" alt="Job Application Process" class="img-fluid rounded-custom shadow-sm mt-5">
-                                <div class="text-center mt-4">
-                                    <h5 class="text-primary">Ready to Apply?</h5>
-                                    <p class="text-muted">Submit your application today and take the next step in your career journey.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Apply Section -->
-                        <div class="apply-section mt-5">
-                            <div class="row align-items-center">
-                                <div class="col-lg-8">
-                                    <h3 class="text-white mb-3">Ready to Apply for This Position?</h3>
-                                    <p class="text-white-50 mb-0">Submit your application now and take the next step in your career journey. Our hiring team reviews all applications promptly.</p>
-                                </div>
-                                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                                    <a href="#apply-now" class="btn btn-light btn-lg px-4">Apply Now <i class="fas fa-arrow-right ms-2"></i></a>
-                                </div>
-                            </div>
+                        <h3 class="mb-4">Job Description</h3>
+                        <div class="job-description">
+                            {!! nl2br(e($job->description)) !!}
                         </div>
                     </div>
 
@@ -209,12 +123,8 @@
                 <!-- Sidebar -->
                 <div class="col-lg-4">
                     <!-- Apply Button -->
-                    <div class="job-detail-sidebar mb-4" id="apply-now">
-                        <div class="text-center mb-4">
-                            <img src="https://img.freepik.com/free-vector/online-resume-concept-illustration_114360-5164.jpg" alt="Apply Now" class="img-fluid rounded-custom mb-3" style="max-width: 200px;">
-                            <h3 class="h5 mb-2">Apply for this Job</h3>
-                            <p class="text-muted small">Application takes less than 5 minutes</p>
-                        </div>
+                    <div class="job-detail-sidebar mb-4">
+                        <h3 class="h5 mb-4">Apply for this Job</h3>
 
                         @auth
                             @if(auth()->user()->role === 'candidate')
@@ -223,244 +133,113 @@
                                 @endphp
 
                                 @if($hasApplied)
-                                    <div class="alert alert-info border-0 shadow-sm">
-                                        <div class="d-flex">
-                                            <div class="me-3">
-                                                <i class="fas fa-check-circle fa-2x text-primary"></i>
-                                            </div>
-                                            <div>
-                                                <h5 class="alert-heading mb-1">Application Submitted</h5>
-                                                <p class="mb-0">You have already applied for this job. You can check the status in your dashboard.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-grid mt-3">
-                                        <a href="{{ route('candidate.job-applications.index') }}" class="btn btn-outline-primary">
-                                            <i class="fas fa-clipboard-list me-2"></i> View My Applications
-                                        </a>
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-check-circle me-2"></i> You have already applied for this job.
                                     </div>
                                 @else
                                     @if(\Carbon\Carbon::now()->gt($job->deadline))
-                                        <div class="alert alert-warning border-0 shadow-sm">
-                                            <div class="d-flex">
-                                                <div class="me-3">
-                                                    <i class="fas fa-exclamation-circle fa-2x text-warning"></i>
-                                                </div>
-                                                <div>
-                                                    <h5 class="alert-heading mb-1">Deadline Passed</h5>
-                                                    <p class="mb-0">The application deadline for this job has passed on {{ \Carbon\Carbon::parse($job->deadline)->format('M d, Y') }}.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="d-grid mt-3">
-                                            <a href="{{ route('job-listings.index') }}" class="btn btn-outline-primary">
-                                                <i class="fas fa-search me-2"></i> Browse Similar Jobs
-                                            </a>
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-circle me-2"></i> The application deadline has passed.
                                         </div>
                                     @else
                                         @if(!auth()->user()->resume_path)
-                                            <div class="alert alert-warning border-0 shadow-sm mb-3">
-                                                <div class="d-flex">
-                                                    <div class="me-3">
-                                                        <i class="fas fa-exclamation-circle fa-2x text-warning"></i>
-                                                    </div>
-                                                    <div>
-                                                        <h5 class="alert-heading mb-1">Resume Required</h5>
-                                                        <p class="mb-0">You need to upload your resume before applying for this job.</p>
-                                                    </div>
-                                                </div>
+                                            <div class="alert alert-warning mb-3">
+                                                <i class="fas fa-exclamation-circle me-2"></i> You need to upload your resume before applying.
                                             </div>
-                                            <form action="{{ route('candidate.profile.update') }}" method="POST" enctype="multipart/form-data" class="job-application-form">
+                                            <form action="{{ route('candidate.profile.update') }}" method="POST" enctype="multipart/form-data">
                                                 @csrf
                                                 @method('PATCH')
                                                 <div class="mb-3">
                                                     <label for="resume" class="form-label">Upload Resume</label>
-                                                    <div class="custom-file-upload">
-                                                        <input type="file" class="form-control" id="resume" name="resume" required hidden>
-                                                        <label for="resume" class="custom-file-label">
-                                                            <i class="fas fa-upload me-2"></i> Choose file
-                                                        </label>
-                                                    </div>
+                                                    <input type="file" class="form-control" id="resume" name="resume" required>
                                                     <div class="form-text">Upload your resume in PDF format. Max size: 5MB.</div>
                                                 </div>
                                                 <div class="d-grid">
-                                                    <button type="submit" class="btn btn-primary btn-lg">
-                                                        <i class="fas fa-file-upload me-2"></i> Upload Resume
-                                                    </button>
+                                                    <button type="submit" class="btn btn-primary">Upload Resume</button>
                                                 </div>
-                                                <div class="text-center mt-3">
-                                                    <a href="{{ route('candidate.profile') }}" class="text-primary">
-                                                        <i class="fas fa-user-edit me-1"></i> Go to profile to upload more details
-                                                    </a>
+                                                <div class="text-center mt-2">
+                                                    <a href="{{ route('candidate.profile') }}" class="small">Go to profile to upload more details</a>
                                                 </div>
                                             </form>
                                         @else
-                                            <form action="{{ route('job-listings.apply', $job->id) }}" method="POST" id="job-application-form" class="job-application-form">
+                                            <form action="{{ route('job-listings.apply', $job->id) }}" method="POST" id="job-application-form">
                                                 @csrf
                                                 <div class="mb-3">
                                                     <label for="message" class="form-label">Cover Letter (Optional)</label>
                                                     <textarea class="form-control" id="message" name="message" rows="5" placeholder="Tell the employer why you're a good fit for this position..." data-max-chars="1000"></textarea>
                                                 </div>
                                                 <div class="d-grid">
-                                                    <button type="submit" class="btn btn-primary btn-lg btn-submit">
-                                                        <i class="fas fa-paper-plane me-2"></i> Submit Application
-                                                    </button>
+                                                    <button type="submit" class="btn btn-primary">Apply Now</button>
                                                 </div>
-                                                <div class="mt-3 p-3 bg-light rounded-3">
+                                                <div class="mt-3">
                                                     <div class="d-flex align-items-center">
-                                                        <i class="fas fa-file-pdf fa-2x text-danger me-3"></i>
-                                                        <div>
-                                                            <h6 class="mb-1">Your Resume</h6>
-                                                            <p class="mb-0 small">Your resume will be attached to this application</p>
-                                                        </div>
+                                                        <i class="fas fa-file-pdf text-danger me-2"></i>
+                                                        <span>Your resume is attached to this application</span>
                                                     </div>
-                                                    <div class="mt-2 d-flex justify-content-between">
-                                                        <a href="{{ asset('storage/' . auth()->user()->resume_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                            <i class="fas fa-eye me-1"></i> View Resume
+                                                    <div class="mt-2">
+                                                        <a href="{{ asset('storage/' . auth()->user()->resume_path) }}" target="_blank" class="small">
+                                                            <i class="fas fa-eye me-1"></i> View your resume
                                                         </a>
-                                                        <a href="{{ route('candidate.profile') }}" class="btn btn-sm btn-outline-secondary">
-                                                            <i class="fas fa-edit me-1"></i> Update Resume
+                                                        <span class="mx-2">|</span>
+                                                        <a href="{{ route('candidate.profile') }}" class="small">
+                                                            <i class="fas fa-edit me-1"></i> Update resume
                                                         </a>
                                                     </div>
-                                                </div>
-
-                                                <div class="application-tips mt-4">
-                                                    <h5><i class="fas fa-lightbulb me-2"></i> Application Tips</h5>
-                                                    <ul>
-                                                        <li>Tailor your cover letter to the job description</li>
-                                                        <li>Highlight relevant skills and experience</li>
-                                                        <li>Keep your application concise and professional</li>
-                                                        <li>Proofread before submitting</li>
-                                                    </ul>
                                                 </div>
                                             </form>
                                         @endif
                                     @endif
                                 @endif
                             @elseif(auth()->user()->role === 'employer')
-                                <div class="alert alert-info border-0 shadow-sm">
-                                    <div class="d-flex">
-                                        <div class="me-3">
-                                            <i class="fas fa-info-circle fa-2x text-primary"></i>
-                                        </div>
-                                        <div>
-                                            <h5 class="alert-heading mb-1">Employer Account</h5>
-                                            <p class="mb-0">You are logged in as an employer and cannot apply for jobs.</p>
-                                        </div>
-                                    </div>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i> You are logged in as an employer and cannot apply for jobs.
                                 </div>
                             @else
-                                <div class="alert alert-info border-0 shadow-sm">
-                                    <div class="d-flex">
-                                        <div class="me-3">
-                                            <i class="fas fa-info-circle fa-2x text-primary"></i>
-                                        </div>
-                                        <div>
-                                            <h5 class="alert-heading mb-1">Admin Account</h5>
-                                            <p class="mb-0">You are logged in as an admin and cannot apply for jobs.</p>
-                                        </div>
-                                    </div>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i> You are logged in as an admin and cannot apply for jobs.
                                 </div>
                             @endif
                         @else
-                            <div class="alert alert-info border-0 shadow-sm mb-4">
-                                <div class="d-flex">
-                                    <div class="me-3">
-                                        <i class="fas fa-info-circle fa-2x text-primary"></i>
-                                    </div>
-                                    <div>
-                                        <h5 class="alert-heading mb-1">Login Required</h5>
-                                        <p class="mb-0">You need to login as a candidate to apply for this job.</p>
-                                    </div>
-                                </div>
+                            <div class="alert alert-info mb-3">
+                                <i class="fas fa-info-circle me-2"></i> You need to login as a candidate to apply for this job.
                             </div>
-                            <div class="d-grid gap-3">
-                                <a href="{{ route('login') }}" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-sign-in-alt me-2"></i> Login to Apply
-                                </a>
-                                <a href="{{ route('register') }}" class="btn btn-outline-primary">
-                                    <i class="fas fa-user-plus me-2"></i> Register as Candidate
-                                </a>
-                            </div>
-
-                            <div class="mt-4 text-center">
-                                <img src="https://img.freepik.com/free-vector/sign-concept-illustration_114360-5267.jpg" alt="Sign Up" class="img-fluid rounded-custom" style="max-width: 200px;">
+                            <div class="d-grid gap-2">
+                                <a href="{{ route('login') }}" class="btn btn-primary">Login to Apply</a>
+                                <a href="{{ route('register') }}" class="btn btn-outline-primary">Register as Candidate</a>
                             </div>
                         @endauth
                     </div>
 
                     <!-- Company Info -->
                     <div class="job-detail-sidebar mb-4">
-                        <div class="company-info">
-                            <div class="text-center mb-4">
-                                @if($job->company_logo)
-                                    <img src="{{ asset('storage/' . $job->company_logo) }}" alt="{{ $job->employer->company_name ?? $job->employer->name }}" class="company-logo mb-3">
-                                @else
-                                    <div class="company-logo-placeholder mb-3">
-                                        <i class="fas fa-building text-primary"></i>
-                                    </div>
-                                @endif
-                                <h4 class="h5 mb-2">{{ $job->employer->company_name ?? $job->employer->name }}</h4>
-                                <p class="text-muted small mb-3">{{ $job->employer->industry ?? 'Technology' }}</p>
+                        <h3 class="h5 mb-4">About the Company</h3>
 
-                                <div class="company-social-links mb-3">
-                                    <a href="#" class="social-link" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                                    <a href="#" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a>
-                                    <a href="#" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                                    @if($job->employer->website)
-                                        <a href="{{ $job->employer->website }}" target="_blank" class="social-link" title="Website"><i class="fas fa-globe"></i></a>
-                                    @endif
-                                </div>
-                            </div>
-
-                            @if($job->employer->bio)
-                                <div class="company-description mb-4">
-                                    <h5 class="mb-3"><i class="fas fa-info-circle text-primary me-2"></i> About the Company</h5>
-                                    <p>{{ $job->employer->bio }}</p>
+                        <div class="text-center mb-4">
+                            @if($job->company_logo)
+                                <img src="{{ asset('storage/' . $job->company_logo) }}" alt="{{ $job->employer->company_name ?? $job->employer->name }}" class="mb-3" style="max-width: 150px;">
+                            @else
+                                <div class="d-flex align-items-center justify-content-center mb-3" style="height: 100px;">
+                                    <i class="fas fa-building fa-4x text-secondary"></i>
                                 </div>
                             @endif
+                            <h4 class="h6">{{ $job->employer->company_name ?? $job->employer->name }}</h4>
+                        </div>
 
-                            <div class="company-details mb-4">
-                                <div class="company-detail-item">
-                                    <div class="icon">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                    </div>
-                                    <div class="content">
-                                        <h6>Location</h6>
-                                        <p>{{ $job->employer->location ?? $job->location }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="company-detail-item">
-                                    <div class="icon">
-                                        <i class="fas fa-users"></i>
-                                    </div>
-                                    <div class="content">
-                                        <h6>Company Size</h6>
-                                        <p>{{ rand(50, 500) }}+ Employees</p>
-                                    </div>
-                                </div>
-
-                                <div class="company-detail-item">
-                                    <div class="icon">
-                                        <i class="fas fa-briefcase"></i>
-                                    </div>
-                                    <div class="content">
-                                        <h6>Open Positions</h6>
-                                        <p>{{ rand(3, 15) }} Jobs</p>
-                                    </div>
-                                </div>
+                        @if($job->employer->website)
+                            <div class="mb-3">
+                                <i class="fas fa-globe text-primary me-2"></i>
+                                <a href="{{ $job->employer->website }}" target="_blank">{{ $job->employer->website }}</a>
                             </div>
+                        @endif
 
-                            <div class="d-grid">
-                                <a href="{{ route('job-listings.index', ['employer' => $job->employer_id]) }}" class="btn btn-outline-primary">
-                                    <i class="fas fa-briefcase me-2"></i> View All Jobs by this Employer
-                                </a>
+                        @if($job->employer->bio)
+                            <div class="mb-3">
+                                <p>{{ $job->employer->bio }}</p>
                             </div>
+                        @endif
 
-                            <div class="mt-4 text-center">
-                                <img src="https://img.freepik.com/free-vector/company-concept-illustration_114360-2581.jpg" alt="Company" class="img-fluid rounded-custom" style="max-width: 200px;">
-                            </div>
+                        <div class="d-grid">
+                            <a href="{{ route('job-listings.index', ['employer' => $job->employer_id]) }}" class="btn btn-outline-primary">View All Jobs by this Employer</a>
                         </div>
                     </div>
 

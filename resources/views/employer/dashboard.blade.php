@@ -18,15 +18,15 @@
             <!-- Employer Profile Card -->
             <div class="dashboard-card mb-4">
                 <div class="profile-summary">
-                    @if(auth()->user()->company_logo)
-                        <img src="{{ asset('storage/' . auth()->user()->company_logo) }}" alt="{{ auth()->user()->company_name }}" class="profile-logo">
+                    @if($user->company_logo)
+                        <img src="{{ asset('storage/' . $user->company_logo) }}" alt="{{ $user->company_name }}" class="profile-logo">
                     @else
                         <div class="profile-avatar">
-                            {{ substr(auth()->user()->company_name ?? auth()->user()->name, 0, 1) }}
+                            {{ substr($user->company_name ?? $user->name, 0, 1) }}
                         </div>
                     @endif
-                    <h5 class="profile-name">{{ auth()->user()->company_name ?? auth()->user()->name }}</h5>
-                    <p class="profile-email">{{ auth()->user()->email }}</p>
+                    <h5 class="profile-name">{{ $user->company_name ?? $user->name }}</h5>
+                    <p class="profile-email">{{ $user->email }}</p>
                     <a href="{{ route('employer.profile') }}" class="btn btn-outline-primary">
                         <i class="fas fa-user-edit me-2"></i>Edit Profile
                     </a>
@@ -62,13 +62,13 @@
         <div class="col-lg-9">
             <!-- Welcome Message -->
             <div class="welcome-card">
-                <h2><i class="fas fa-building me-2"></i>Welcome, {{ auth()->user()->company_name ?? auth()->user()->name }}!</h2>
+                <h2><i class="fas fa-building me-2"></i>Welcome, {{ $user->company_name ?? $user->name }}!</h2>
                 <p>
                     Manage your job listings and track applications from candidates.
                     Find the perfect talent for your company!
                 </p>
                 <div class="d-flex gap-2 mt-3">
-                    <a href="{{ url('/add_post') }}" class="btn btn-light">
+                    <a href="{{ route('job-listings.create') }}" class="btn btn-light">
                         <i class="fas fa-plus-circle me-2"></i>Post a New Job
                     </a>
                     <a href="{{ route('employer.profile') }}" class="btn btn-outline-light">
@@ -87,7 +87,7 @@
                             </div>
                             <h6 class="quick-action-title">Post a Job</h6>
                             <p class="quick-action-description">Create a new job listing</p>
-                            <a href="{{ url('/add_post') }}" class="btn btn-sm btn-primary mt-2">Create</a>
+                            <a href="{{ route('job-listings.create') }}" class="btn btn-sm btn-primary mt-2">Create</a>
                         </div>
 
                         <div class="quick-action-card">
@@ -115,7 +115,7 @@
             <div class="dashboard-card" id="job-listings">
                 <div class="card-header bg-light d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0"><i class="fas fa-briefcase me-2"></i>My Job Listings</h5>
-                    <a href="{{ url('/add_post') }}" class="btn btn-sm btn-primary">
+                    <a href="{{ route('job-listings.create') }}" class="btn btn-sm btn-primary">
                         <i class="fas fa-plus me-1"></i>Add New
                     </a>
                 </div>
@@ -233,7 +233,7 @@
                             <i class="fas fa-info-circle me-3 fa-2x"></i>
                             <div>
                                 You haven't posted any jobs yet.
-                                <a href="{{ url('/add_post') }}" class="alert-link">Post your first job</a> to start receiving applications.
+                                <a href="{{ route('job-listings.create') }}" class="alert-link">Post your first job</a> to start receiving applications.
                             </div>
                         </div>
 
@@ -241,7 +241,7 @@
                             <img src="{{ asset('images/no-jobs.svg') }}" alt="No Jobs" class="img-fluid mb-4" style="max-width: 250px; opacity: 0.7;">
                             <h4>No Job Listings Yet</h4>
                             <p class="text-muted">Create your first job listing to start receiving applications from qualified candidates.</p>
-                            <a href="{{ url('/add_post') }}" class="btn btn-primary mt-3">
+                            <a href="{{ route('job-listings.create') }}" class="btn btn-primary mt-3">
                                 <i class="fas fa-plus-circle me-2"></i>Post a Job
                             </a>
                         </div>

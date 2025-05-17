@@ -36,7 +36,7 @@
                                     <label for="search" class="form-label">Search</label>
                                     <input type="text" class="form-control" id="search" name="search" value="{{ request('search') }}" placeholder="Company name">
                                 </div>
-
+                                
                                 <div class="mb-3">
                                     <label for="industry" class="form-label">Industry</label>
                                     <select class="form-select" id="industry" name="industry">
@@ -46,16 +46,16 @@
                                         @endforeach
                                     </select>
                                 </div>
-
+                                
                                 <div class="mb-3">
                                     <label for="location" class="form-label">Location</label>
                                     <input type="text" class="form-control" id="location" name="location" value="{{ request('location') }}" placeholder="City or country">
                                 </div>
-
+                                
                                 <div class="d-grid">
                                     <button type="submit" class="btn btn-primary">Apply Filters</button>
                                 </div>
-
+                                
                                 @if(request()->anyFilled(['search', 'industry', 'location']))
                                     <div class="d-grid mt-2">
                                         <a href="{{ route('employers.index') }}" class="btn btn-outline-secondary">Clear Filters</a>
@@ -65,12 +65,12 @@
                         </div>
                     </div>
                 </div>
-
+                
                 <!-- Employers Grid -->
                 <div class="col-lg-9">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <p class="mb-0">Showing {{ $employers->firstItem() ?? 0 }} - {{ $employers->lastItem() ?? 0 }} of {{ $employers->total() }} employers</p>
-
+                        
                         <div class="btn-group">
                             <a href="{{ request()->fullUrlWithQuery(['view' => 'grid']) }}" class="btn btn-outline-primary {{ request('view') != 'list' ? 'active' : '' }}">
                                 <i class="fas fa-th-large"></i>
@@ -80,7 +80,7 @@
                             </a>
                         </div>
                     </div>
-
+                    
                     @if(request('view') == 'list')
                         <!-- List View -->
                         <div class="employers-list">
@@ -101,7 +101,7 @@
                                                 <h3 class="h5 mb-1">{{ $employer->company_name ?? $employer->name }}</h3>
                                                 @if($employer->website)
                                                     <p class="text-muted small mb-2">
-                                                        <i class="fas fa-globe me-1"></i>
+                                                        <i class="fas fa-globe me-1"></i> 
                                                         <a href="{{ $employer->website }}" target="_blank" class="text-decoration-none">{{ $employer->website }}</a>
                                                     </p>
                                                 @endif
@@ -162,7 +162,7 @@
                             @endforelse
                         </div>
                     @endif
-
+                    
                     <!-- Pagination -->
                     <div class="d-flex justify-content-center mt-4">
                         {{ $employers->withQueryString()->links() }}
@@ -216,6 +216,23 @@
 
 @push('scripts')
 <script>
-    // This is now handled by the PHP helper function
+    function getIndustryIcon(industry) {
+        const icons = {
+            'Technology': 'laptop-code',
+            'Healthcare': 'heartbeat',
+            'Finance': 'chart-line',
+            'Education': 'graduation-cap',
+            'Retail': 'shopping-cart',
+            'Manufacturing': 'industry',
+            'Marketing': 'bullhorn',
+            'Hospitality': 'hotel',
+            'Construction': 'hard-hat',
+            'Transportation': 'truck',
+            'Media': 'photo-video',
+            'Agriculture': 'leaf'
+        };
+        
+        return icons[industry] || 'building';
+    }
 </script>
 @endpush

@@ -4,13 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Job;
 use App\Models\Application;
-use App\Models\User;
-use App\Notifications\NewApplicationReceived;
-use App\Notifications\ApplicationStatusChanged;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Notification;
 
 class JobApplicationController extends Controller
 {
@@ -22,12 +17,10 @@ class JobApplicationController extends Controller
      */
     public function viewApplications($jobId)
     {
-        $job = Job::findOrFail($jobId);
-
         // Ensure the job belongs to the current employer
-        if ($job->employer_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        $job = Job::where('id', $jobId)
+            ->where('employer_id', Auth::id())
+            ->firstOrFail();
 
         $applications = Application::where('job_id', $job->id)
             ->with('candidate')
@@ -58,22 +51,10 @@ class JobApplicationController extends Controller
             return back()->with('error', 'Unauthorized action.');
         }
 
-        // Update the application status
         $application->status = $request->status;
         $application->save();
 
-        // Notify the candidate when their application status changes
-        $application->candidate->notify(new ApplicationStatusChanged($application));
-
-        $statusMessages = [
-            'reviewing' => 'Application marked as under review.',
-            'interviewed' => 'Application marked as interviewed.',
-            'accepted' => 'Application has been accepted.',
-            'rejected' => 'Application has been rejected.'
-        ];
-
-        $message = $statusMessages[$request->status] ?? 'Application status updated successfully.';
-        return back()->with('success', $message);
+        return back()->with('success', 'Application status updated successfully.');
     }
 
     /**
@@ -141,17 +122,13 @@ class JobApplicationController extends Controller
 
             // Create application with try-catch to handle database errors
             try {
-                $application = Application::create([
+                Application::create([
                     'job_id' => $job->id,
                     'candidate_id' => Auth::id(),
                     'resume_path' => $candidate->resume_path,
                     'message' => $message,
                     'status' => 'pending'
                 ]);
-
-                // Notify the employer about the new application
-                $employer = User::find($job->employer_id);
-                $employer->notify(new NewApplicationReceived($application));
 
                 return back()->with('success', 'Your application has been submitted successfully.');
             } catch (\Exception $e) {
@@ -229,17 +206,13 @@ class JobApplicationController extends Controller
 
             // Create application with try-catch to handle database errors
             try {
-                $application = Application::create([
+                Application::create([
                     'job_id' => $job->id,
                     'candidate_id' => Auth::id(),
                     'resume_path' => $resumePath,
                     'message' => $request->message,
                     'status' => 'pending'
                 ]);
-
-                // Notify the employer about the new application
-                $employer = User::find($job->employer_id);
-                $employer->notify(new NewApplicationReceived($application));
 
                 return back()->with('success', 'Your application has been submitted successfully.');
             } catch (\Exception $e) {

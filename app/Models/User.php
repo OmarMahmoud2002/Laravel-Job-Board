@@ -63,4 +63,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Application::class, 'candidate_id');
     }
+    public function conversations()
+    {
+        return $this->hasMany(Conversation::class, $this->role === 'employer' ? 'employer_id' : 'candidate_id');
+    }
 }
